@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+
+<style>
+  
+    .upload-icon {
+      font-size: 1rem;
+      color: white;
+      cursor: pointer;
+    }
+    .headstyle {
+        color: rgb(255, 255, 255);
+        font-variant: petite-caps;
+        background-color: rgb(0, 0, 0, 0.8);
+        margin-bottom: 0px
+    }
+
+    .divstyle {
+        border-radius: 10px 10px 10px 10px;
+        margin-left: 1px;
+        margin-right: 1px
+    }
+
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+      color: #333;
+    }
+
+    /* Navbar using the Indian cricket team's jersey blue */
+    .navbar {
+      background-color: #0b5ed7 !important;
+      /* Royal Blue */
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+    }
+
+    .navbar-brand,
+    .nav-link {
+      color: #fff !important;
+    }
+
+    /* Card styling: white background, no border */
+    .card {
+      background-color: #fff;
+      border: none;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-title {
+      color:  #0b5ed7;
+    }
+
+    /* Styling for the entered symptoms container (whiteboard effect) */
+    #entered-sym {
+      background-color: #fff;
+      border: 1px solid #dee2e6;
+      border-radius: 5px;
+      padding: 10px;
+      height: 100px;
+      /* Fixed height */
+      overflow-y: auto;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      width: 100%;
+    }
+
+    /* Custom styling for the entered symptoms badges */
+    .entered-badge {
+      font-weight: 400;
+      /* less bold */
+      color: #fff !important;
+      /* white text */
+      font-family: 'Open Sans', sans-serif;
+    }
+
+    /* Input group styling */
+    .input-group-text {
+      background-color: #e9ecef;
+      border: none;
+      font-weight: 500;
+    }
+
+    .form-control {
+      border: none;
+      background-color: #f8f9fa;
+    }
+
+    /* Dropdown styling: fixed height and scrollable */
+    #symptoms-dd-div {
+      background-color: #fff;
+      border: 1px solid #dee2e6;
+      height: 200px;
+      /* Fixed height */
+      overflow-y: auto;
+    }
+
+    #symptoms-dd li {
+      background-color: #fff;
+      color: #333;
+    }
+
+    #symptoms-dd li:hover {
+      background-color: #f1f1f1;
+    }
+
+    /* Container for common symptoms buttons */
+    #common-symptoms {
+      margin-top: 10px;
+    }
+
+    .common-and-submit {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .submit {
+      margin: 1ch 0ch 1ch 1ch;
+    }
+
+    .card-deck{
+        display: flex;
+    }
+
+    #diag-cards{
+        display:flex;
+        justify-content: space-between;
+    }
+
+    .diag-cards{
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .nav-item{
+        margin-left: 1ch;
+        margin-right: 1ch;
+    }
+
+    .active{
+        color: #0b5ed7;
+    }
+
+    .predict-footer{
+        display: flex;
+        justify-content: end;
+    }
+
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+</style>
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+
+    <title>HealthCure</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+</head>
+
+<body>
+
+
+   {{navbar_html | safe}}
+
+    <h2 class='text-center py-3'
+            style="color: black; font-variant: petite-caps;margin-bottom:0px">
+            <p><b>Salubritas</b> is a reference point for diagnosis and help based on reports.</p>
+    </h2>
+
+    <div class="row" style="font-size: 20px;padding: 0px 50px 50px 50px;display:flex;" id="diag-cards">
+        </div>
+        <!-- <p><b>Salubritas</b> is a reference point to for diagnosis and help based on reports.</p> -->
+
+        <!-- <h2 class='text-center py-3'
+            style="color: rgb(255, 255, 255);font-variant: petite-caps;background-color: rgb(0, 0, 0);margin-bottom:0px">
+            <b><i>Diagnosis</i></b>
+        </h2> -->
+
+        
+
+        <!-- <div class='divstyle' style='margin:40px 20px 60px 20px'>
+            <div class="row py-3">
+                 <div class="col md-3">
+                    <h3 class='text-center py-3 headstyle' style="font-size: 18px;"><b>Covid Detection</b></h3>
+                    <a href="./covid"><img src="../static/icons/covid.jpg" class="img-fluid mx-auto d-block"></a>
+                </div> -->
+                <!-- <div class="col md-3">
+                    <h3 class='text-center py-3 headstyle' style="font-size: 18px;"><b>Brain Tumor Detection</b></h3>
+                    <a href="./braintumor"><img src="../static/icons/braintumor.png"
+                            class="img-fluid mx-auto d-block"></a>
+                </div> -->
+                <!-- <div class="col md-3">
+                    <h3 class='text-center py-3 headstyle' style="font-size: 18px;"><b>Breast Cancer Detection</b></h3>
+                    <a href="./breastcancer"><img src="../static/icons/breastcancer.png"
+                            class="img-fluid mx-auto d-block"></a>
+                </div>
+                <div class="col md-3">
+                    <h3 class='text-center py-3 headstyle' style="font-size: 18px;"><b>Alzheimer Detection</b></h3>
+                    <a href="./alzheimer"><img src="../static/icons/alzheimer.png"
+                            class="img-fluid mx-auto d-block"></a>
+                </div> -->
+            <!-- </div>
+        </div> --> 
+        
+
+        
+    </div>
+
+
+
+
+    <!-- <footer class='text-light bg-dark position-relative d-flex flex-column align-items-center justify-content-center'>
+        <p class='text-center my-0 mx-0 py-2 px-2'>
+            <p>This is a very simple attempt at automation of a very complex problem of diagnosis.</p>
+            <p>The scope covered is too little and the data used to train isnt as vast as we would have liked it to be.</p>
+            <p>The diagnosis shouldn't be taken seriously but can be used as a reference point.</p>
+            <p>Thank You!</p>
+        </p>
+    </footer> -->
+
+    {{ footer | safe }}
+
+    <script>
+        active = "{{ active }}";
+    </script>
+
+
+    <!-- Option 1: Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+        crossorigin="anonymous"></script>
+
+    <script src = "../static/actions.js">
+       
+    //       <script>
+    // type = "{{ active }}"
+    // console.log(type)
+  </script>
+
+    </script>
+
+    
+
+
+
+</body>
+
+</html>

@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Symptoms-Based</title>
+  <!-- Google Fonts: Open Sans -->
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous" />
+  <style>
+    /* Overall theme using Open Sans */
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+      color: #333;
+    }
+
+    /* Navbar using the Indian cricket team's jersey blue */
+    .navbar {
+      background-color: #0b5ed7 !important;
+      /* Royal Blue */
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+    }
+
+    .navbar-brand,
+    .nav-link {
+      color: #fff !important;
+    }
+
+    /* Card styling: white background, no border */
+    .card {
+      background-color: #fff;
+      border: none;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-title {
+      color: #0b5ed7;
+    }
+
+    /* Styling for the entered symptoms container (whiteboard effect) */
+    #entered-sym {
+      background-color: #fff;
+      border: 1px solid #dee2e6;
+      border-radius: 5px;
+      padding: 10px;
+      height: 100px;
+      /* Fixed height */
+      overflow-y: auto;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      width: 100%;
+    }
+
+    /* Custom styling for the entered symptoms badges */
+    .entered-badge {
+      font-weight: 400;
+      /* less bold */
+      color: #fff !important;
+      /* white text */
+      font-family: 'Open Sans', sans-serif;
+    }
+
+    /* Input group styling */
+    .input-group-text {
+      background-color: #e9ecef;
+      border: none;
+      font-weight: 500;
+    }
+
+    .form-control {
+      border: none;
+      background-color: #f8f9fa;
+    }
+
+    /* Dropdown styling: fixed height and scrollable */
+    #symptoms-dd-div {
+      background-color: #fff;
+      border: 1px solid #dee2e6;
+      height: 200px;
+      /* Fixed height */
+      overflow-y: auto;
+    }
+
+    #symptoms-dd li {
+      background-color: #fff;
+      color: #333;
+    }
+
+    #symptoms-dd li:hover {
+      background-color: #f1f1f1;
+    }
+
+    /* Container for common symptoms buttons */
+    #common-symptoms {
+      margin-top: 10px;
+    }
+
+    .common-and-submit {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .submit {
+      margin: 1ch 0ch 1ch 1ch;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Navbar -->
+  {{ navbar_html | safe }}
+
+  <!-- Centered Main Content -->
+  <form action="/predict/symptomsbased" , method="POST">
+    <div class="d-flex justify-content-center align-items-center vh-100">
+      <div class="card shadow-sm w-75" style="max-width: 600px;">
+        <div class="card-body p-5">
+          <h4 class="card-title mb-5">Enter Your Symptoms</h4>
+          <!-- Whiteboard container for entered symptoms -->
+          <div id="entered-sym" class="mb-5 fs-6"></div>
+          <!-- Dropdown wrapper -->
+          <div class="dropdown position-relative mb-5">
+            <div class="input-group">
+              <!-- <span class="input-group-text">Search Symptoms</span> -->
+              <input id="search-sym" type="text" class="form-control border border-primary"
+                placeholder="Type to search symptoms..." aria-label="Search Symptoms">
+            </div>
+            <!-- Dropdown that appears under the input -->
+            <div id="symptoms-dd-div" class="dropdown-menu w-100">
+              <ul class="list-group list-group-flush" id="symptoms-dd"></ul>
+            </div>
+          </div>
+          <div class="common-and-submit">
+            <div>
+              <h5 class="card-subtitle mb-3 text-muted">Common Symptoms</h5>
+              <!-- Container for common symptom buttons -->
+              <div id="common-symptoms"></div>
+            </div>
+            <button class="btn btn-primary" id="submit-button">Predict</button>
+          </div>
+          <input type="text" name="list" id="list" val = "" style="display: none;">
+        </div>
+      </div>
+    </div>
+  </form>
+
+  {{ footer | safe }}
+
+  <!-- JavaScript -->
+  <script>
+    // Global variables
+    const entered = document.getElementById("entered-sym");
+    const dddiv = document.getElementById("symptoms-dd-div");
+    const ddmenu = document.getElementById("symptoms-dd");
+    const searchsym = document.getElementById("search-sym");
+    const listel = document.getElementById('list');
+
+    // Full list of symptoms for dropdown
+    const symptoms = ['swelling joints', 'ulcers on tongue', 'congestion', 'altered sensorium', 'blurred and distorted vision', 'high fever', 'painful walking', 'irritability', 'receiving unsterile injections', 'anxiety', 'rusty sputum', 'increased appetite', 'mood swings', 'weakness of one body side', 'hip joint pain', 'passage of gases', 'weight gain', 'distention of abdomen', 'internal itching', 'skin peeling', 'continuous sneezing', 'swelled lymph nodes', 'puffy face and eyes', 'swollen legs', 'acute liver failure', 'extra marital contacts', 'bloody stool', 'receiving blood transfusion', 'history of alcohol consumption', 'watering from eyes', 'brittle nails', 'irregular sugar level', 'red sore around nose', 'polyuria', 'obesity', 'malaise', 'scurring', 'restlessness', 'inflammatory nails', 'silver like dusting', 'nodal skin eruptions', 'pain in anal region', 'small dents in nails', 'constipation', 'indigestion', 'headache', 'muscle pain', 'nausea', 'prominent veins on calf', 'itching', 'lack of concentration', 'red spots over body', 'patches in throat', 'blackheads', 'dischromic patches', 'stomach pain', 'knee pain', 'muscle weakness', 'cold hands and feets', 'fatigue', 'yellowish skin', 'palpitations', 'bruising', 'fast heart rate', 'cough', 'cramps', 'drying and tingling lips', 'pain during bowel movements', 'swollen extremeties', 'continuous feel of urine', 'excessive hunger', 'loss of smell', 'stiff neck', 'diarrhoea', 'irritation in anus', 'weakness in limbs', 'blood in sputum', 'shivering', 'dark urine', 'bladder discomfort', 'swollen blood vessels', 'depression', 'yellow crust ooze', 'vomiting', 'back pain', 'lethargy', 'yellow urine', 'enlarged thyroid', 'dizziness', 'slurred speech', 'muscle wasting', 'weight loss', 'stomach bleeding', 'neck pain', 'loss of balance', 'spinning movements', 'chest pain', 'toxic look (typhos)', 'chills', 'unsteadiness', 'blister', 'loss of appetite', 'foul smell of urine', 'fluid overload', 'coma', 'breathlessness', 'pus filled pimples', 'family history', 'pain behind the eyes', 'burning micturition', 'sinus pressure', 'joint pain', 'mild fever', 'redness of eyes', 'phlegm', 'dehydration', 'spotting urination', 'abdominal pain', 'abnormal menstruation', 'skin rash', 'movement stiffness', 'belly pain', 'visual disturbances', 'runny nose', 'throat irritation', 'sunken eyes', 'mucoid sputum', 'acidity', 'swelling of stomach', 'sweating', 'yellowing of eyes'];
+    
+    // A subset of common symptoms for quick selection
+    const commonSymptoms = ['cough', 'high fever', 'headache', 'nausea', 'fatigue'];
+
+    // Sets to track added symptoms and a map for created badge elements
+    const addedSym = new Set();
+    const mapOfSym = new Map();
+
+    // Function to render the dropdown based on the search query
+    function filterSymptoms() {
+      const query = searchsym.value.toLowerCase();
+      ddmenu.innerHTML = ""; // clear current list
+      // Filter symptoms that match the query
+      const filtered = symptoms.filter(sym => sym.toLowerCase().includes(query));
+      filtered.forEach(symptom => {
+        const cap = capitalize(symptom);
+        const li = document.createElement("li");
+        li.className = "list-group-item";
+        li.innerHTML = `<div class="form-check">
+          <input class="form-check-input" type="checkbox" onclick="updateSym('${symptom}')" value="${symptom}" id="${symptom}" ${addedSym.has(symptom) ? 'checked' : ''}>
+          <label class="form-check-label" for="${symptom}">${cap}</label>
+        </div>`;
+        ddmenu.appendChild(li);
+      });
+      // Show or hide dropdown based on available matches
+      if (filtered.length > 0) {
+        dddiv.classList.add("show");
+      } else {
+        dddiv.classList.remove("show");
+      }
+    }
+
+    // Initially populate the dropdown with all symptoms
+    // filterSymptoms();
+
+    // Populate the common symptoms container with buttons
+    const commonContainer = document.getElementById("common-symptoms");
+    commonSymptoms.forEach(sym => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "btn btn-outline-primary btn-sm me-1 mb-1";
+      btn.id = "common-" + sym.replace(/\s+/g, '-');
+      btn.textContent = capitalize(sym);
+      btn.onclick = function () {
+        updateSym(sym);
+        filterSymptoms(); // update dropdown after selection
+      };
+      commonContainer.appendChild(btn);
+    });
+
+    // Show dropdown when clicking the search input and filter as you type
+    searchsym.addEventListener("click", filterSymptoms);
+    searchsym.addEventListener("input", filterSymptoms);
+
+    // Hide the dropdown when clicking outside of the dropdown container
+    document.addEventListener("click", function (event) {
+      if (!event.target.closest(".dropdown")) {
+        dddiv.classList.remove("show");
+      }
+    });
+
+    // Function to add or remove a symptom from the entered symptoms area and update UI elements
+    function updateSym(sym) {
+      const checkbox = document.getElementById(sym);
+      const commonBtn = document.getElementById("common-" + sym.replace(/\s+/g, '-'));
+      if (!addedSym.has(sym)) {
+        if (!mapOfSym.has(sym)) {
+          const div = document.createElement("div");
+          div.id = sym + "-ent";
+          div.className = "badge entered-badge bg-success me-1 mb-1 fs-6";
+          div.textContent = capitalize(sym);
+          mapOfSym.set(sym, div);
+          entered.appendChild(div);
+        } else {
+          entered.appendChild(mapOfSym.get(sym));
+        }
+        addedSym.add(sym);
+        if (checkbox) checkbox.checked = true;
+        if (commonBtn) commonBtn.classList.add("active");
+      } else {
+        const div = document.getElementById(sym + "-ent");
+        if (div) entered.removeChild(div);
+        addedSym.delete(sym);
+        if (checkbox) checkbox.checked = false;
+        if (commonBtn) commonBtn.classList.remove("active");
+      }
+    }
+
+    // Utility function to capitalize each word in a string
+    function capitalize(s) {
+      return s.split(" ").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
+    }
+
+    // [].
+
+    submit_button = document.getElementById("submit-button");
+
+
+    submit_button.addEventListener('click', function () {
+      var liststr = ""
+      for (let index = 0; index < symptoms.length; index++) {
+        const element = symptoms[index];
+        if (addedSym.has(element)) {
+          liststr+="1";
+        } else {
+          liststr+="0";
+        }
+      }
+      listel.value=liststr;
+
+      // let timeout = setTimeout(alertFunc, 10000);
+
+
+      
+
+    })
+
+    // function alertFunc() {
+    //     timeout()
+    //     alert("Hello!");
+    //   }
+
+  </script>
+
+  <script>
+    active = "{{ active }}";
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-j0Q4npzUyOq9kLGe47hCz+NwZ6EUp3lKl8IFX1PfCtbYCKyA3Alm7F7k9Wv0BfQK"
+    crossorigin="anonymous"></script>
+
+  <script src="../static/actions.js"></script>
+
+  <script>
+    type = "{{ active }}"
+    console.log(type)
+  </script>
+</body>
+
+</html>

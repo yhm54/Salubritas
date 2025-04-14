@@ -1,0 +1,31 @@
+diabetes: 
+import kagglehub
+
+# Download latest version
+path = kagglehub.dataset_download("nanditapore/healthcare-diabetes")
+
+print("Path to dataset files:", path)
+
+
+import kagglehub
+
+# Download latest version
+path = kagglehub.dataset_download("ankitbatra1210/diabetes-dataset")
+
+print("Path to dataset files:", path)
+
+
+import kagglehub
+
+# Download latest version
+path = kagglehub.dataset_download("uciml/pima-indians-diabetes-database")
+
+print("Path to dataset files:", path)
+
+
+import kagglehub
+
+# Download latest version
+path = kagglehub.dataset_download("alexteboul/diabetes-health-indicators-dataset")
+
+print("Path to dataset files:", path)
