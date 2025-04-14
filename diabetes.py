@@ -29,4 +29,5 @@ def normalize(inp):
         newinp[key] = np.float64(inp[key])
         newinp[key] = (max[key] - newinp[key])/(max[key] - min[key])
 
+    print(newinp)
     return newinp

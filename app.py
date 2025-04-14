@@ -135,7 +135,7 @@ types = {
      'Non Demented':'https://en.wikipedia.org/wiki/Alzheimer%27s_disease', 
      'Very Mild Demented':'https://en.wikipedia.org/wiki/Alzheimer%27s_disease'}
     }, 'pneumonia': {'model': pneumonia_model, 'type': 'Binary', 'op_possibilities': ['Pneumonia'], 'links': 
-        {'Pneumonia': 'https://lunghealth.ca/what-is-pneumonia-and-why-is-it-important-to-know/?gad_source=1&gclid=CjwKCAjw5PK_BhBBEiwAL7GTPRsOvrMjOWz3t5vMdzWV6qw0sT6Nb9-R7ojIa_oaqBO8E-x9LJTSbRoCQW0QAvD_BwE'}
+        {'Pneumonia': 'https://lunghealth.ca/what-is-pneumonia-and-why-is-it-important-to-know/?gad_source=1&gclid=CjwKCAjw5PK_BhBBEiwAL7GTPRsOvrMjOWz3t5vMdzWV6qw0sT6Nb9-R7ojIa_oaqBO8E-x9LJTSbRoCQW0QAvD_BwE', 'No Pneumonia': 'https://lunghealth.ca/what-is-pneumonia-and-why-is-it-important-to-know/?gad_source=1&gclid=CjwKCAjw5PK_BhBBEiwAL7GTPRsOvrMjOWz3t5vMdzWV6qw0sT6Nb9-R7ojIa_oaqBO8E-x9LJTSbRoCQW0QAvD_BwE'}
         }, 'manyinone': {'model': manyinone_model, 'type': 'Categorical', 'op_possibilities': ['Mild Demented', 'Moderate Demented', 'Normal (Pneumonia)', 'Non Demented', 'Pneumonia', 'Very Mild Demented', 'Glioma', 'Meningioma', 'No Tumor', 'Pituitary'], 'links': 
             {'Glioma': 'https://www.cancer.gov/types/brain/patient/adult-glioma-treatment-pdq', 
             'Mild Demented':'https://en.wikipedia.org/wiki/Alzheimer%27s_disease', 
@@ -147,7 +147,7 @@ types = {
             'No Tumor': 'https://my.clevelandclinic.org/health/diseases/21881-tumor',  # General info
             'Pituitary': 'https://www.mayoclinic.org/diseases-conditions/pituitary-tumors/symptoms-causes/syc-20350560'}
         },},
-    'textbased': {'diabetes': {'model': diabetes_model, 'type': 'Binary', 'op_possibilities': ['Diabetes'], 'links': {'Diabetes': 'https://my.clevelandclinic.org/health/diseases/7104-diabetes'}}, 'heartdisease': '5005',
+    'textbased': {'diabetes': {'model': diabetes_model, 'type': 'Binary', 'op_possibilities': ['Diabetes'], 'links': {'Diabetes': 'https://my.clevelandclinic.org/health/diseases/7104-diabetes', 'No Diabetes': 'https://my.clevelandclinic.org/health/diseases/7104-diabetes'}}, 'heartdisease': '5005',
                 'symptomsbased': {'model': symptomsbased_model, 'type': 'Categorical', 'op_possibilities': 
                     ['Fungal infection', 'Allergy', 'GERD', 'Chronic cholestasis', 'Drug Reaction', 'Peptic ulcer diseae', 'AIDS', 'Diabetes ', 'Gastroenteritis', 'Bronchial Asthma', 'Hypertension ', 'Migraine', 'Cervical spondylosis', 'Paralysis (brain hemorrhage)', 'Jaundice', 'Malaria', 'Chicken pox', 'Dengue', 'Typhoid', 'hepatitis A', 'Hepatitis B', 'Hepatitis C', 'Hepatitis D', 'Hepatitis E', 'Alcoholic hepatitis', 'Tuberculosis', 'Common Cold', 'Pneumonia', 'Dimorphic hemmorhoids(piles)', 'Heart attack', 'Varicose veins', 'Hypothyroidism', 'Hyperthyroidism', 'Hypoglycemia', 'Osteoarthristis', 'Arthritis', '(vertigo) Paroymsal  Positional Vertigo', 'Acne', 'Urinary tract infection', 'Psoriasis', 'Impetigo'], 'links': {
                     'Fungal infection': 'https://www.cdc.gov/fungal/index.html',
@@ -232,17 +232,22 @@ def predict(diag_type):
             img = img/255.0
             pred = model.predict(img)
             print(pred)
+            index = 0
             if type=='Categorical':
+                print('cat')
                 index = list(pred[0]).index(np.max(pred[0]))
                 res = possibilities[index]
             elif type == 'Binary':
+                index = 0
+                print('checking')
                 if pred>0.5:
                     res = possibilities[0]
                 else:
                     res = "No " + possibilities[0]
             c_res = collapse(res)
+            print(c_res)
             link = dt_data['links'][c_res]
-            return render_template('prediction.html', res = c_res, link= link, filename = filename, footer = footer)
+            return render_template('prediction.html', res = res, link= link, filename = filename, footer = footer, navbar = navbar_html)
         else:
             dt_data = types['textbased'][diag_type]
             model = dt_data['model']
@@ -273,15 +278,14 @@ def predict(diag_type):
                 res = pred
             else:
                 print(pred)
-                if pred>0.5:
+                if pred<0.5:
                     res = possibilities[0]
                 else:
-                    res = "No " + possibilities[0]
-            
+                    res = "No " + possibilities[0]            
             
             c_res = collapse(res)
             link = dt_data['links'][c_res]
-            return render_template('prediction.html', res=c_res, link = link, footer = footer)
+            return render_template('prediction.html', res=c_res, link = link, footer = footer, navbar = navbar_html)
 
         
 
